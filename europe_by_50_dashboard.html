@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Europe by 50 — Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0f1420;
+    --panel: #171f2e;
+    --panel-2: #1e2839;
+    --border: #2a3550;
+    --text: #eef2f8;
+    --muted: #93a1bd;
+    --visited: #34d399;
+    --visited-bg: rgba(52,211,153,0.12);
+    --planned: #fbbf24;
+    --planned-bg: rgba(251,191,36,0.14);
+    --unvisited: #64748b;
+    --unvisited-bg: rgba(100,116,139,0.14);
+    --accent: #6366f1;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(160deg, #0b0f18, #121a2b 60%, #0b0f18);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 32px 24px 60px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .subtitle { color: var(--muted); font-size: 14.5px; }
+  .subtitle b { color: var(--text); }
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin: 26px 0 30px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .value { font-size: 24px; font-weight: 650; }
+  .card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .card.visited .value { color: var(--visited); }
+  .card.planned .value { color: var(--planned); }
+  .card.unvisited .value { color: var(--unvisited); }
+  .card.accent .value { color: var(--accent); }
+
+  .progress-bar {
+    height: 10px;
+    border-radius: 6px;
+    background: var(--unvisited-bg);
+    overflow: hidden;
+    display: flex;
+    margin: 4px 0 30px;
+    border: 1px solid var(--border);
+  }
+  .progress-bar .seg-visited { background: var(--visited); }
+  .progress-bar .seg-planned { background: var(--planned); }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .filters button {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filters button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .country {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .country { position: relative; }
+  .country .flag { font-size: 26px; line-height: 1; }
+  .country .name { font-size: 14px; font-weight: 550; display: flex; align-items: center; gap: 6px; }
+  .advisory-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: none;
+    cursor: help;
+  }
+  .advisory-dot.lvl4 { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.22); }
+  .advisory-dot.lvl3 { background: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.20); }
+  .advisory-dot.partial { background: transparent; box-shadow: none; border: 2px solid; }
+  .advisory-dot.partial.lvl4 { border-color: #ef4444; }
+  .advisory-dot.partial.lvl3 { border-color: #f5a623; }
+  .country .status {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    display: inline-block;
+    margin-top: 3px;
+  }
+  .country .note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .country.visited .status { background: var(--visited-bg); color: var(--visited); }
+  .country.planned .status { background: var(--planned-bg); color: var(--planned); }
+  .country.unvisited .status { background: var(--unvisited-bg); color: var(--unvisited); }
+
+  footer {
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🌍 Europe by 50</h1>
+    <div class="subtitle">Goal: visit all <b>50 European countries</b> before turning 50 on <b>Nov 10, 2028</b> · Data as of <b>Jul 29, 2026</b></div>
+    <div class="legend">
+      <span><i class="advisory-dot lvl4"></i> Level 4 — Do Not Travel</span>
+      <span><i class="advisory-dot lvl3"></i> Level 3 — Reconsider Travel</span>
+      <span><i class="advisory-dot partial lvl4"></i> Level 4 in part of country only</span>
+    </div>
+  </header>
+
+  <div class="progress-bar">
+    <div class="seg-visited" style="width: 56%"></div>
+    <div class="seg-planned" style="width: 2%"></div>
+  </div>
+
+  <div class="metrics">
+    <div class="card visited">
+      <div class="label">Visited</div>
+      <div class="value">28 / 50</div>
+      <div class="sub">56% complete</div>
+    </div>
+    <div class="card planned">
+      <div class="label">Planned</div>
+      <div class="value">1</div>
+      <div class="sub">Denmark, Aug 7–9 2026</div>
+    </div>
+    <div class="card unvisited">
+      <div class="label">Unvisited</div>
+      <div class="value">21</div>
+      <div class="sub">not yet booked</div>
+    </div>
+    <div class="card accent">
+      <div class="label">Months left</div>
+      <div class="value">27.4</div>
+      <div class="sub">to Nov 10, 2028</div>
+    </div>
+    <div class="card accent">
+      <div class="label">Min. pace needed</div>
+      <div class="value">0.80/mo</div>
+      <div class="sub">≈1 country every 5.4 weeks</div>
+    </div>
+    <div class="card accent">
+      <div class="label">Avg. trip length</div>
+      <div class="value">3 days</div>
+      <div class="sub">est. from 1 planned trip (Denmark)</div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="active" data-filter="all">All (50)</button>
+    <button data-filter="visited">Visited (28)</button>
+    <button data-filter="planned">Planned (1)</button>
+    <button data-filter="unvisited">Unvisited (21)</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    Country list: 50 sovereign European states (a fitting round number for "Europe by 50"), per standard reference lists (e.g. <a href="https://en.wikipedia.org/wiki/List_of_sovereign_states_in_Europe_by_Press_Freedom_Index" target="_blank">Wikipedia sovereign states in Europe</a>), incl. transcontinental Russia, Turkey, Georgia, Azerbaijan, and Kazakhstan, plus microstates Andorra, Liechtenstein, Monaco, San Marino, Vatican City. As of 2026-07-29: Armenia and Kazakhstan confirmed <b>unvisited</b> (not previously visited, despite earlier assumption); Russia, Georgia, and Azerbaijan also marked <b>unvisited</b>, since prior visits there were not on their European side. Kosovo excluded as a UN-disputed territory.<br>
+    Deadline = 50th birthday (Nov 10, 2028). "Min. pace needed" = remaining countries (unvisited + planned) ÷ months left. "Avg. trip length" has only one data point so far (Denmark) — will sharpen as more trips are logged.<br>
+    Advisory dots reflect US State Department travel advisory levels as of late Jul 2026: solid red = Level 4 Do Not Travel, solid amber = Level 3 Reconsider Travel, ringed = that level applies only to a specific region, not the whole country. Flagged: Russia (L4), Belarus (L4), Azerbaijan (L3), Georgia (L4 in Abkhazia/South Ossetia only), Moldova (L3 in Transnistria only). These are fast-moving and should be rechecked before booking.<br>
+    Update this file as trips get booked or completed.
+  </footer>
+</div>
+
+<script>
+const countries = [
+  {name:"Albania", flag:"🇦🇱", status:"unvisited"},
+  {name:"Andorra", flag:"🇦🇩", status:"unvisited"},
+  {name:"Armenia", flag:"🇦🇲", status:"unvisited"},
+  {name:"Austria", flag:"🇦🇹", status:"visited"},
+  {name:"Azerbaijan", flag:"🇦🇿", status:"unvisited", advisory:3, advisoryNote:"US Level 3 – Reconsider Travel (armed conflict/landmines near Armenian border)"},
+  {name:"Belarus", flag:"🇧🇾", status:"unvisited", advisory:4, advisoryNote:"US Level 4 – Do Not Travel (arbitrary detention, no consular access)"},
+  {name:"Belgium", flag:"🇧🇪", status:"unvisited"},
+  {name:"Bosnia and Herzegovina", flag:"🇧🇦", status:"unvisited"},
+  {name:"Bulgaria", flag:"🇧🇬", status:"visited"},
+  {name:"Croatia", flag:"🇭🇷", status:"visited"},
+  {name:"Cyprus", flag:"🇨🇾", status:"visited"},
+  {name:"Czech Republic", flag:"🇨🇿", status:"visited"},
+  {name:"Denmark", flag:"🇩🇰", status:"planned", note:"Aug 7–9, 2026"},
+  {name:"Estonia", flag:"🇪🇪", status:"visited"},
+  {name:"Finland", flag:"🇫🇮", status:"unvisited"},
+  {name:"France", flag:"🇫🇷", status:"visited"},
+  {name:"Georgia", flag:"🇬🇪", status:"unvisited", advisory:4, advisoryPartial:true, advisoryNote:"Country overall is Level 1, but Russian-occupied Abkhazia/South Ossetia are US Level 4 – Do Not Travel"},
+  {name:"Germany", flag:"🇩🇪", status:"visited"},
+  {name:"Greece", flag:"🇬🇷", status:"visited"},
+  {name:"Hungary", flag:"🇭🇺", status:"visited"},
+  {name:"Iceland", flag:"🇮🇸", status:"visited"},
+  {name:"Ireland", flag:"🇮🇪", status:"visited"},
+  {name:"Italy", flag:"🇮🇹", status:"visited"},
+  {name:"Kazakhstan", flag:"🇰🇿", status:"unvisited"},
+  {name:"Latvia", flag:"🇱🇻", status:"visited"},
+  {name:"Liechtenstein", flag:"🇱🇮", status:"unvisited"},
+  {name:"Lithuania", flag:"🇱🇹", status:"visited"},
+  {name:"Luxembourg", flag:"🇱🇺", status:"unvisited"},
+  {name:"Malta", flag:"🇲🇹", status:"visited"},
+  {name:"Moldova", flag:"🇲🇩", status:"unvisited", advisory:3, advisoryPartial:true, advisoryNote:"Country overall is Level 2, but breakaway Transnistria region is US Level 3 – Reconsider Travel"},
+  {name:"Monaco", flag:"🇲🇨", status:"visited"},
+  {name:"Montenegro", flag:"🇲🇪", status:"unvisited"},
+  {name:"Netherlands", flag:"🇳🇱", status:"visited"},
+  {name:"North Macedonia", flag:"🇲🇰", status:"unvisited"},
+  {name:"Norway", flag:"🇳🇴", status:"visited"},
+  {name:"Poland", flag:"🇵🇱", status:"visited"},
+  {name:"Portugal", flag:"🇵🇹", status:"visited"},
+  {name:"Romania", flag:"🇷🇴", status:"unvisited"},
+  {name:"Russia", flag:"🇷🇺", status:"unvisited", advisory:4, advisoryNote:"US Level 4 – Do Not Travel (war in Ukraine, wrongful detention risk, no consular access)"},
+  {name:"San Marino", flag:"🇸🇲", status:"visited"},
+  {name:"Serbia", flag:"🇷🇸", status:"unvisited"},
+  {name:"Slovakia", flag:"🇸🇰", status:"visited"},
+  {name:"Slovenia", flag:"🇸🇮", status:"unvisited"},
+  {name:"Spain", flag:"🇪🇸", status:"visited"},
+  {name:"Sweden", flag:"🇸🇪", status:"unvisited"},
+  {name:"Switzerland", flag:"🇨🇭", status:"unvisited"},
+  {name:"Turkey", flag:"🇹🇷", status:"visited"},
+  {name:"Ukraine", flag:"🇺🇦", status:"visited"},
+  {name:"United Kingdom", flag:"🇬🇧", status:"visited"},
+  {name:"Vatican City", flag:"🇻🇦", status:"visited"}
+];
+
+const grid = document.getElementById('grid');
+
+function render(filter) {
+  grid.innerHTML = '';
+  countries
+    .filter(c => filter === 'all' || c.status === filter)
+    .sort((a,b) => a.name.localeCompare(b.name))
+    .forEach(c => {
+      const el = document.createElement('div');
+      el.className = 'country ' + c.status;
+      const dot = c.advisory
+        ? `<span class="advisory-dot lvl${c.advisory}${c.advisoryPartial ? ' partial' : ''}" title="${c.advisoryNote || ''}"></span>`
+        : '';
+      el.innerHTML = `
+        <div class="flag">${c.flag}</div>
+        <div>
+          <div class="name">${c.name}${dot}</div>
+          <div class="status">${c.status}</div>
+          ${c.note ? `<div class="note">${c.note}</div>` : ''}
+          ${c.advisoryNote ? `<div class="note" title="${c.advisoryNote}">⚠ ${c.advisory === 4 ? 'Level 4' : 'Level 3'}${c.advisoryPartial ? ' (region)' : ''}</div>` : ''}
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+}
+
+document.querySelectorAll('.filters button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.filter);
+  });
+});
+
+render('all');
+</script>
+</body>
+</html>
