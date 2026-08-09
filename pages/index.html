@@ -168,7 +168,7 @@
 
   <div class="progress-bar">
     <div class="seg-visited" style="width: 58%"></div>
-    <div class="seg-planned" style="width: 2%"></div>
+    <div class="seg-planned" style="width: 4%"></div>
   </div>
 
   <div class="metrics">
@@ -179,12 +179,12 @@
     </div>
     <div class="card planned">
       <div class="label">Planned</div>
-      <div class="value">1</div>
-      <div class="sub">Kazakhstan (Oct 1–7)</div>
+      <div class="value">2</div>
+      <div class="sub">Slovenia (Aug 16–17); Kazakhstan (Oct 1–7)</div>
     </div>
     <div class="card unvisited">
       <div class="label">Unvisited</div>
-      <div class="value">20</div>
+      <div class="value">19</div>
       <div class="sub">not yet booked</div>
     </div>
     <div class="card accent">
@@ -199,23 +199,23 @@
     </div>
     <div class="card accent">
       <div class="label">Avg. trip length</div>
-      <div class="value">5 days</div>
-      <div class="sub">1 completed (Denmark, 3 days) + 1 planned (Kazakhstan, 7 days)</div>
+      <div class="value">4 days</div>
+      <div class="sub">1 completed (Denmark, 3 days) + 2 planned (Slovenia, 2 days; Kazakhstan, 7 days)</div>
     </div>
   </div>
 
   <div class="filters">
     <button class="active" data-filter="all">All (50)</button>
     <button data-filter="visited">Visited (29)</button>
-    <button data-filter="planned">Planned (1)</button>
-    <button data-filter="unvisited">Unvisited (20)</button>
+    <button data-filter="planned">Planned (2)</button>
+    <button data-filter="unvisited">Unvisited (19)</button>
   </div>
 
   <div class="grid" id="grid"></div>
 
   <footer>
-    Country list: 50 sovereign European states (a fitting round number for "Europe by 50"), per standard reference lists (e.g. <a href="https://en.wikipedia.org/wiki/List_of_sovereign_states_in_Europe_by_Press_Freedom_Index" target="_blank">Wikipedia sovereign states in Europe</a>), incl. transcontinental Russia, Turkey, Georgia, Azerbaijan, and Kazakhstan, plus microstates Andorra, Liechtenstein, Monaco, San Marino, Vatican City. As of 2026-08-09: Denmark is now <b>visited</b> (trip completed Aug 7–9, 2026); Kazakhstan remains <b>planned</b> (Oct 1–7, 2026); Armenia remains <b>unvisited</b>; Russia, Georgia, and Azerbaijan also marked <b>unvisited</b>, since prior visits there were not on their European side. Kosovo excluded as a UN-disputed territory.<br>
-    Deadline = 50th birthday (Nov 10, 2028). "Min. pace needed" = remaining countries (unvisited + planned) ÷ months left. "Avg. trip length" based on 1 completed trip (Denmark) and 1 planned trip (Kazakhstan) — will sharpen further as more trips are logged.<br>
+    Country list: 50 sovereign European states (a fitting round number for "Europe by 50"), per standard reference lists (e.g. <a href="https://en.wikipedia.org/wiki/List_of_sovereign_states_in_Europe_by_Press_Freedom_Index" target="_blank">Wikipedia sovereign states in Europe</a>), incl. transcontinental Russia, Turkey, Georgia, Azerbaijan, and Kazakhstan, plus microstates Andorra, Liechtenstein, Monaco, San Marino, Vatican City. As of 2026-08-09: Denmark is now <b>visited</b> (trip completed Aug 7–9, 2026); Slovenia is now <b>planned</b> (Maribor, Aug 16–17, 2026); Kazakhstan remains <b>planned</b> (Oct 1–7, 2026); Armenia remains <b>unvisited</b>; Russia, Georgia, and Azerbaijan also marked <b>unvisited</b>, since prior visits there were not on their European side. Kosovo excluded as a UN-disputed territory.<br>
+    Deadline = 50th birthday (Nov 10, 2028). "Min. pace needed" = remaining countries (unvisited + planned) ÷ months left. "Avg. trip length" based on 1 completed trip (Denmark) and 2 planned trips (Slovenia, Kazakhstan) — will sharpen further as more trips are logged.<br>
     Advisory dots reflect US State Department travel advisory levels as of late Jul 2026: solid red = Level 4 Do Not Travel, solid amber = Level 3 Reconsider Travel, ringed = that level applies only to a specific region, not the whole country. Flagged: Russia (L4), Belarus (L4), Azerbaijan (L3), Georgia (L4 in Abkhazia/South Ossetia only), Moldova (L3 in Transnistria only). These are fast-moving and should be rechecked before booking.<br>
     Update this file as trips get booked or completed.
   </footer>
@@ -265,7 +265,7 @@ const countries = [
   {name:"San Marino", flag:"🇸🇲", status:"visited"},
   {name:"Serbia", flag:"🇷🇸", status:"unvisited"},
   {name:"Slovakia", flag:"🇸🇰", status:"visited"},
-  {name:"Slovenia", flag:"🇸🇮", status:"unvisited"},
+  {name:"Slovenia", flag:"🇸🇮", status:"planned", note:"Maribor, Aug 16–17, 2026"},
   {name:"Spain", flag:"🇪🇸", status:"visited"},
   {name:"Sweden", flag:"🇸🇪", status:"unvisited"},
   {name:"Switzerland", flag:"🇨🇭", status:"unvisited"},
